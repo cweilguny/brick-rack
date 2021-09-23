@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+cd "${SCRIPT_DIR}/../" || exit
+
+metcalf
+
+rm -rf 'tmp/' 'publish/files/'
+mkdir -p 'tmp/Brick Rack Sources' 'publish/files/'
+cp -r scad/* 'tmp/Brick Rack Sources'
+cd tmp || exit
+zip -r '../publish/files/Brick Rack Sources.zip' 'Brick Rack Sources'
+cd .. || exit
+
+cp stl/*.stl 'publish/files/'
+
+cd ../../
+rm -rf 'tmp/'

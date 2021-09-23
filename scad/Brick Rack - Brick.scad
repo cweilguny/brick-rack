@@ -13,6 +13,12 @@ DEPTH = 20;
 TOTAL_LENGTH = 50;
 // Total length of the nose
 TOTAL_LENGTH_NOSE = 36;
+// Thickness of the top and bottom arm and minimum thickness of the left bar
+FRAME_THICKNESS = 10;
+// The total height is calculated automatically to "DEVICE_HEIGHT + 2 * FRAME_THICKNESS". If you want to override it, you can do so here, if you want the top or bottom arm to be thicker. Set to 0 to reset to automatic height calculation.
+OVERRIDE_TOTAL_HEIGHT = 0;
+// If you override the total height, you can set if the additional height is distributed evenly on top and bottom, or if you want to extend the height on the top arm or on the bottom arm.
+OVERRIDE_TOTAL_HEIGHT_TYPE = "EVEN"; // ["EVEN", "EXTEND_TOP", "EXTEND_BOTTOM"]
 
 module __Customizer_Limit__() {}
 
@@ -80,11 +86,13 @@ module nose_notch_body(enlargement = 0) {
     translate([x_offset, 0, y_offset])
         rotate([90, 0, 0])
             linear_extrude(NOSE_NOTCH_HEIGHT + enlargement)
-                rounded_square([nose_notch_body_length(enlargement), nose_notch_body_depth(enlargement)], ROUNDING_RADIUS_NOSE_NOTCH);
+                rounded_square([nose_notch_body_length(enlargement), nose_notch_body_depth(enlargement)],
+                ROUNDING_RADIUS_NOSE_NOTCH);
 }
 
 module cutout() {
-    translate([cutout_inset_x(), FRAME_THICKNESS, - RENDER_HELPER])
+    y_offset = OVERRIDE_TOTAL_HEIGHT == 0 ? FRAME_THICKNESS : cutout_offset_y(OVERRIDE_TOTAL_HEIGHT_TYPE);
+    translate([cutout_inset_x(), y_offset, - RENDER_HELPER])
         linear_extrude(DEPTH + 2 * RENDER_HELPER)
             rounded_square([TOTAL_LENGTH, DEVICE_HEIGHT], ROUNDING_RADIUS_CUTOUT);
 }

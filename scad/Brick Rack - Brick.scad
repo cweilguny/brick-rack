@@ -15,6 +15,10 @@ TOTAL_LENGTH = 50;
 TOTAL_LENGTH_NOSE = 36;
 // Thickness of the top and bottom arm and minimum thickness of the left bar
 FRAME_THICKNESS = 10;
+// Include a nose on the bottom?
+INCLUDE_NOSE = true;
+// Include a notch on the top?
+INCLUDE_NOTCH = true;
 // The total height is calculated automatically to "DEVICE_HEIGHT + 2 * FRAME_THICKNESS". If you want to override it, you can do so here, if you want the top or bottom arm to be thicker. Set to 0 to reset to automatic height calculation.
 OVERRIDE_TOTAL_HEIGHT = 0;
 // If you override the total height, you can set if the additional height is distributed evenly on top and bottom, or if you want to extend the height on the top arm or on the bottom arm.
@@ -60,9 +64,9 @@ module main() {
     difference() {
         union() {
             body();
-            nose();
+            if (INCLUDE_NOSE) nose();
         }
-        notch();
+        if (INCLUDE_NOTCH) notch();
         cutout();
     }
 }

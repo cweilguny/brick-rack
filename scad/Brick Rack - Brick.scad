@@ -7,10 +7,12 @@ DEVICE_WIDTH_WIDEST = 180;
 DEVICE_WIDTH = 168;
 // Height of the device
 DEVICE_HEIGHT = 30.5;
-// Total length
-TOTAL_LENGTH = 60;
-// Depth
+// Depth of the brick
 DEPTH = 20;
+// Total length of the brick
+TOTAL_LENGTH = 50;
+// Total length of the nose
+TOTAL_LENGTH_NOSE = 36;
 
 module __Customizer_Limit__() {}
 
@@ -73,7 +75,7 @@ module notch() {
 }
 
 module nose_notch_body(enlargement = 0) {
-    x_offset = (TOTAL_LENGTH - nose_notch_body_length(enlargement)) / 2;
+    x_offset = NOSE_INSET_X;
     y_offset = (DEPTH - nose_notch_body_depth(enlargement)) / 2;
     translate([x_offset, 0, y_offset])
         rotate([90, 0, 0])

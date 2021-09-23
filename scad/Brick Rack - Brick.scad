@@ -1,7 +1,16 @@
 ////////////////////////////////////////////////////////////////////////////////
 // ### CUSTOMIZABLE VARIABLES
 ////////////////////////////////////////////////////////////////////////////////
-
+// Width of the widest device in the whole rack
+DEVICE_WIDTH_WIDEST = 180;
+// Width of the device
+DEVICE_WIDTH = 168;
+// Height of the device
+DEVICE_HEIGHT = 30.5;
+// Total length
+TOTAL_LENGTH = 60;
+// Depth
+DEPTH = 20;
 
 module __Customizer_Limit__() {}
 
@@ -40,4 +49,40 @@ main();
 // ### MODULES
 ////////////////////////////////////////////////////////////////////////////////
 module main() {
+    difference() {
+        union() {
+            body();
+            nose();
+        }
+        notch();
+        cutout();
+    }
+}
+
+module body() {
+    rounded_cube([TOTAL_LENGTH, total_height(), DEPTH], ROUNDING_RADIUS_BODY);
+}
+
+module nose() {
+    nose_notch_body();
+}
+
+module notch() {
+    translate([0, total_height() + RENDER_HELPER, 0])
+        nose_notch_body(NOSE_NOTCH_SIZE_DIFF);
+}
+
+module nose_notch_body(enlargement = 0) {
+    x_offset = (TOTAL_LENGTH - nose_notch_body_length(enlargement)) / 2;
+    y_offset = (DEPTH - nose_notch_body_depth(enlargement)) / 2;
+    translate([x_offset, 0, y_offset])
+        rotate([90, 0, 0])
+            linear_extrude(NOSE_NOTCH_HEIGHT + enlargement)
+                rounded_square([nose_notch_body_length(enlargement), nose_notch_body_depth(enlargement)], ROUNDING_RADIUS_NOSE_NOTCH);
+}
+
+module cutout() {
+    translate([cutout_inset_x(), FRAME_THICKNESS, - RENDER_HELPER])
+        linear_extrude(DEPTH + 2 * RENDER_HELPER)
+            rounded_square([TOTAL_LENGTH, DEVICE_HEIGHT], ROUNDING_RADIUS_CUTOUT);
 }

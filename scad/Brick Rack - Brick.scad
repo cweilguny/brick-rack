@@ -36,19 +36,57 @@ $fn = 24;
 ////////////////////////////////////////////////////////////////////////////////
 // ### GLOBAL VARIABLES
 ////////////////////////////////////////////////////////////////////////////////
-include <includes/Brick Rack Variables.scad>
+RENDER_HELPER = 0.01;
+
+ROUNDING_RADIUS_BODY = 2;
+ROUNDING_RADIUS_CUTOUT = 2;
+ROUNDING_RADIUS_NOSE_NOTCH = 2;
+
+NOSE_NOTCH_HEIGHT = 5;
+NOSE_INSET_X = 7;
+NOSE_INSET_Y = 5;
+NOSE_NOTCH_SIZE_DIFF = 1;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // ### UTILITY MODULES
 ////////////////////////////////////////////////////////////////////////////////
-include <includes/Brick Rack Utilities.scad>
+module rounded_square(dimensions, r, center = false) {
+    x = dimensions[0];
+    y = dimensions[1];
+    translate([center ? 0 : r, center ? 0 : r, 0])
+        minkowski() {
+            square([x - 2 * r, y - 2 * r], center);
+            circle(r = r);
+        }
+}
+
+module rounded_cube(dimensions, r, center = false) {
+    x = dimensions[0];
+    y = dimensions[1];
+    z = dimensions[2];
+    translate([center ? - x / 2 : 0, center ? - y / 2 : 0, center ? - z / 2 : 0])
+        hull() {
+            translate([r, r, r]) sphere(r = r);
+            translate([x - r, r, r]) sphere(r = r);
+            translate([x - r, y - r, r]) sphere(r = r);
+            translate([r, y - r, r]) sphere(r = r);
+            translate([r, r, z - r]) sphere(r = r);
+            translate([x - r, r, z - r]) sphere(r = r);
+            translate([x - r, y - r, z - r]) sphere(r = r);
+            translate([r, y - r, z - r]) sphere(r = r);
+        }
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 // ### CALCULATION FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
-include <includes/Brick Rack Calculations.scad>
+function total_height() = OVERRIDE_TOTAL_HEIGHT == 0 ? DEVICE_HEIGHT + 2 * FRAME_THICKNESS : OVERRIDE_TOTAL_HEIGHT;
+function nose_notch_body_length(enlargement) = TOTAL_LENGTH_NOSE + enlargement;
+function nose_notch_body_depth(enlargement) = DEPTH - 2 * NOSE_INSET_Y + enlargement;
+function cutout_inset_x() = FRAME_THICKNESS + (DEVICE_WIDTH_WIDEST - DEVICE_WIDTH) / 2;
+function cutout_offset_y(type) = type == "EVEN" ? (total_height() - DEVICE_HEIGHT) / 2 : (type == "EXTEND_BOTTOM" ? total_height() - FRAME_THICKNESS - DEVICE_HEIGHT : FRAME_THICKNESS);
 
 
 ////////////////////////////////////////////////////////////////////////////////
